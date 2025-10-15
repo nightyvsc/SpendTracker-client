@@ -1,11 +1,13 @@
 import * as React from 'react';
 import SignIn from './signin/SignIn';
+import Dashboard from './dashboard/Dashboard';
 
 function App() {
   return (
-    <React.Fragment>
+    <>
       <SignIn />
-    </React.Fragment>
+    </>
+
   );
 }
 

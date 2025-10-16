@@ -4,6 +4,7 @@ import PrivateRoute from './routes/PrivateRoute';
 
 import Dashboard from './pages/Dashboard.tsx';
 import SignUp from './pages/SignUp.tsx';
+import CrudDashboard from './pages/CrudDashboard.tsx';
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
         {/* pública */}
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/spendings/*" element={<CrudDashboard />} />
 
         {/* protegidas */}
         <Route element={<PrivateRoute />}>

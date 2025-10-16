@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,6 +15,9 @@ import { Alert } from '@mui/material';
 import AppTheme from '../theme/AppTheme';
 import ColorModeSelect from '../theme/ColorModeSelect';
 import { SitemarkIcon } from '../components/CustomIcons';
+
+import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -58,71 +62,26 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-  const [loading, setLoading] = React.useState(false);
-  const [successMessage, setSuccessMessage] = React.useState('');
+  const { login } = useAuth();
+
+  // 🔹 Estado controlado
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState('');
+
+  const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
+
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!validateInputs()) {
-      return;
-    }
-
-    const data = new FormData(event.currentTarget);
-    const email = data.get('email') as string;
-    const password = data.get('password') as string;
-
-    setLoading(true);
-    setSuccessMessage(''); // Limpiar mensaje anterior
-
-    try {
-      // Llamada al backend Django
-      const response = await fetch('http://localhost:8000/api/auth/login/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Login failed');
-      }
-
-      const result = await response.json();
-
-      // Guardar tokens en localStorage
-      localStorage.setItem('access_token', result.access);
-      localStorage.setItem('refresh_token', result.refresh);
-
-      // Mostrar mensaje de éxito
-      setSuccessMessage('Login successful! Tokens saved in localStorage.');
-
-      // Limpiar errores
-      setPasswordError(false);
-      setPasswordErrorMessage('');
-
-    } catch (error: any) {
-      setPasswordError(true);
-      setPasswordErrorMessage(error.message || 'Invalid email or password');
-      setSuccessMessage('');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const validateInputs = () => {
-    const email = document.getElementById('email') as HTMLInputElement;
-    const password = document.getElementById('password') as HTMLInputElement;
-
+    // 🔸 Validación mínima
     let isValid = true;
-
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
       setEmailErrorMessage('Please enter a valid email address.');
       isValid = false;
@@ -130,8 +89,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       setEmailError(false);
       setEmailErrorMessage('');
     }
-
-    if (!password.value || password.value.length < 6) {
+    if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage('Password must be at least 6 characters long.');
       isValid = false;
@@ -139,8 +97,25 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       setPasswordError(false);
       setPasswordErrorMessage('');
     }
+    if (!isValid) return;
 
-    return isValid;
+    setLoading(true);
+    setSuccessMessage('');
+
+    try {
+      // 🔹 Llama a /api/auth/login/ con email+password (AuthContext guarda tokens y hace profile)
+      await login(email, password);
+
+      setSuccessMessage('Login successful!');
+      toast.success('¡Sesión iniciada!');
+    } catch (error: any) {
+      setPasswordError(true);
+      setPasswordErrorMessage('Invalid email or password');
+      setSuccessMessage('');
+      toast.error('Credenciales inválidas');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -191,8 +166,11 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                 fullWidth
                 variant="outlined"
                 color={emailError ? 'error' : 'primary'}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </FormControl>
+
             <FormControl>
               <FormLabel htmlFor="password">Password</FormLabel>
               <TextField
@@ -207,24 +185,19 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                 fullWidth
                 variant="outlined"
                 color={passwordError ? 'error' : 'primary'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </FormControl>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              disabled={loading}
-            >
+
+            <Button type="submit" fullWidth variant="contained" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign in'}
             </Button>
           </Box>
+
           <Typography sx={{ textAlign: 'center' }}>
             Don&apos;t have an account?{' '}
-            <Link
-              href="/signup"
-              variant="body2"
-              sx={{ alignSelf: 'center' }}
-            >
+            <Link href="/signup" variant="body2" sx={{ alignSelf: 'center' }}>
               Sign up
             </Link>
           </Typography>

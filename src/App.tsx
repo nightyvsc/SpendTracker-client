@@ -1,15 +1,27 @@
-import * as React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import SignIn from './signin/SignIn';
+import PrivateRoute from './routes/PrivateRoute';
+
+// Usa tu dashboard existente
 import Dashboard from './dashboard/Dashboard';
-import SignUp from './signup/SignUp';
 
-function App() {
+export default function App() {
   return (
-    <>
-      <SignIn />
-    </>
+    <BrowserRouter>
+      <Routes>
+        {/* pública */}
+        <Route path="/signin" element={<SignIn />} />
 
+        {/* protegidas */}
+        <Route element={<PrivateRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          {/* Aquí luego agregamos /reports y demás */}
+        </Route>
+
+        {/* redirecciones por defecto */}
+        <Route path="/" element={<Navigate to="/signin" replace />} />
+        <Route path="*" element={<Navigate to="/signin" replace />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;

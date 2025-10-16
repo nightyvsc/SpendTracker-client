@@ -47,42 +47,15 @@ importers:
       dayjs:
         specifier: ^1.11.18
         version: 1.11.18
-      icons-material,:
-        specifier: link:@mui/icons-material,
-        version: link:@mui/icons-material,
-      material,:
-        specifier: link:@mui/material,
-        version: link:@mui/material,
       react:
-        specifier: ^19.1.1
+        specifier: ^19.2.0
         version: 19.2.0
-      react,:
-        specifier: link:@emotion/react,
-        version: link:@emotion/react,
       react-dom:
-        specifier: ^19.1.1
+        specifier: ^19.2.0
         version: 19.2.0(react@19.2.0)
       react-router-dom:
         specifier: ^7.9.4
         version: 7.9.4(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      styled,:
-        specifier: link:@emotion/styled,
-        version: link:@emotion/styled,
-      themeAugmentation:
-        specifier: link:@mui/x-date-pickers-pro/themeAugmentation
-        version: link:@mui/x-date-pickers-pro/themeAugmentation
-      x-charts,:
-        specifier: link:@mui/x-charts,
-        version: link:@mui/x-charts,
-      x-data-grid,:
-        specifier: link:@mui/x-data-grid,
-        version: link:@mui/x-data-grid,
-      x-date-pickers,:
-        specifier: link:@mui/x-date-pickers,
-        version: link:@mui/x-date-pickers,
-      x-tree-view,:
-        specifier: link:@mui/x-tree-view,
-        version: link:@mui/x-tree-view,
     devDependencies:
       '@eslint/js':
         specifier: ^9.36.0

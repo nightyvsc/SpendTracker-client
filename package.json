@@ -23,18 +23,9 @@
     "@react-spring/web": "^10.0.3",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.18",
-    "icons-material,": "link:@mui/icons-material,",
-    "material,": "link:@mui/material,",
-    "react": "^19.1.1",
-    "react,": "link:@emotion/react,",
-    "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.4",
-    "styled,": "link:@emotion/styled,",
-    "themeAugmentation": "link:@mui/x-date-pickers-pro/themeAugmentation",
-    "x-charts,": "link:@mui/x-charts,",
-    "x-data-grid,": "link:@mui/x-data-grid,",
-    "x-date-pickers,": "link:@mui/x-date-pickers,",
-    "x-tree-view,": "link:@mui/x-tree-view,"
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

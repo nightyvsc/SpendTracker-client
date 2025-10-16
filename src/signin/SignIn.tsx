@@ -58,7 +58,8 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
-  const { login } = useAuth();
+  // ⬇️ AHORA obtenemos login, profile y user del contexto
+  const { login, profile, user } = useAuth();
 
   const [username, setUsername] = useState('');
   const [usernameError, setUsernameError] = useState(false);
@@ -70,6 +71,9 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+
+  // ⬇️ NUEVO: mensaje para el “probe” del perfil
+  const [probeMsg, setProbeMsg] = useState<string>('');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -95,6 +99,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 
     setLoading(true);
     setSuccessMessage('');
+    setProbeMsg(''); // limpia mensaje de probe
 
     try {
       await login(username, password);
@@ -107,6 +112,24 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       toast.error('Credenciales inválidas');
     } finally {
       setLoading(false);
+    }
+  };
+
+  // ⬇️ NUEVO: botón temporal para verificar /api/auth/profile/
+  const onProbeProfile = async () => {
+    try {
+      await profile();
+      if (user?.username) {
+        const msg = `Perfil OK. Hola, ${user.username}.`;
+        setProbeMsg(msg);
+        toast.success(msg);
+      } else {
+        setProbeMsg('Perfil leído pero sin username (revisa serializer de profile).');
+        toast.info('Perfil leído sin username');
+      }
+    } catch {
+      setProbeMsg('Error al leer perfil. ¿Token válido?');
+      toast.error('Error leyendo perfil');
     }
   };
 
@@ -170,6 +193,18 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
               {loading ? 'Signing in...' : 'Sign in'}
             </Button>
           </Box>
+
+          {/* ⬇️ NUEVO: botón temporal de prueba de perfil */}
+          <Button onClick={onProbeProfile} variant="outlined" fullWidth sx={{ mt: 1 }}>
+            Probar perfil (temporal)
+          </Button>
+
+          {/* ⬇️ NUEVO: resultado del probe */}
+          {probeMsg && (
+            <Alert severity="info" sx={{ width: '100%', mt: 1 }}>
+              {probeMsg}
+            </Alert>
+          )}
 
           <Typography sx={{ textAlign: 'center' }}>
             Don&apos;t have an account?{' '}

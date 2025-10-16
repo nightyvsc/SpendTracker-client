@@ -1,26 +1,19 @@
-import { createRoot } from "react-dom/client";
-import { createBrowserRouter } from "react-router";
-import { RouterProvider } from "react-router/dom";
-import "./index.css";
-import Dashboard from "./pages/Dashboard.tsx";
-import SignIn from "./pages/SignIn.tsx"
-import SignUp from "./pages/SignUp.tsx"
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css';
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Dashboard />,
-  },
-  {
-    path: "/signup",
-    element: <SignUp />,
-  },
-  {
-    path: "/signin",
-    element: <SignIn />,
-  },
-]);
+import { AuthProvider } from './context/AuthContext';
 
-createRoot(document.getElementById("root")!).render(
-    <RouterProvider router={router} />
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <AuthProvider>
+      <App />
+      {/* 🔹 NUEVO: toasts globales */}
+      <ToastContainer position="top-right" autoClose={3000} />
+    </AuthProvider>
+  </React.StrictMode>,
 );

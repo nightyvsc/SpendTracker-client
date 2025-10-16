@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -15,6 +16,12 @@ import AppTheme from '../theme/AppTheme';
 import ColorModeSelect from '../theme/ColorModeSelect';
 import { SitemarkIcon } from '../components/CustomIcons';
 
+import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
+
+import { useNavigate } from 'react-router-dom';
+
+
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -23,9 +30,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   padding: theme.spacing(4),
   gap: theme.spacing(2),
   margin: 'auto',
-  [theme.breakpoints.up('sm')]: {
-    maxWidth: '450px',
-  },
+  [theme.breakpoints.up('sm')]: { maxWidth: '450px' },
   boxShadow:
     'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
   ...theme.applyStyles('dark', {
@@ -38,9 +43,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
   minHeight: '100%',
   padding: theme.spacing(2),
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(4),
-  },
+  [theme.breakpoints.up('sm')]: { padding: theme.spacing(4) },
   '&::before': {
     content: '""',
     display: 'block',
@@ -58,79 +61,34 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-  const [loading, setLoading] = React.useState(false);
-  const [successMessage, setSuccessMessage] = React.useState('');
+  const { login } = useAuth();
+
+  const [username, setUsername] = useState('');
+  const [usernameError, setUsernameError] = useState(false);
+  const [usernameErrorMessage, setUsernameErrorMessage] = useState('');
+
+  const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
+
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!validateInputs()) {
-      return;
-    }
-
-    const data = new FormData(event.currentTarget);
-    const email = data.get('email') as string;
-    const password = data.get('password') as string;
-
-    setLoading(true);
-    setSuccessMessage(''); // Limpiar mensaje anterior
-
-    try {
-      // Llamada al backend Django
-      const response = await fetch('http://localhost:8000/api/auth/login/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Login failed');
-      }
-
-      const result = await response.json();
-
-      localStorage.setItem('access_token', result.access);
-      localStorage.setItem('refresh_token', result.refresh);
-
-      // Mostrar mensaje de éxito
-      setSuccessMessage('Login successful! Tokens saved in localStorage.');
-
-      // Limpiar errores
-      setPasswordError(false);
-      setPasswordErrorMessage('');
-
-    } catch (error: any) {
-      setPasswordError(true);
-      setPasswordErrorMessage(error.message || 'Invalid email or password');
-      setSuccessMessage('');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const validateInputs = () => {
-    const email = document.getElementById('email') as HTMLInputElement;
-    const password = document.getElementById('password') as HTMLInputElement;
-
     let isValid = true;
-
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
+    if (!username.trim()) {
+      setUsernameError(true);
+      setUsernameErrorMessage('Please enter your username.');
       isValid = false;
     } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
+      setUsernameError(false);
+      setUsernameErrorMessage('');
     }
-
-    if (!password.value || password.value.length < 6) {
+    if (!password || password.length < 6) {
       setPasswordError(true);
       setPasswordErrorMessage('Password must be at least 6 characters long.');
       isValid = false;
@@ -138,8 +96,25 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       setPasswordError(false);
       setPasswordErrorMessage('');
     }
+    if (!isValid) return;
 
-    return isValid;
+    setLoading(true);
+    setSuccessMessage('');
+
+    try {
+      await login(username, password);
+      setSuccessMessage('Login successful!');
+      toast.success('¡Sesión iniciada!');
+      navigate('/dashboard', { replace: true });
+
+    } catch {
+      setPasswordError(true);
+      setPasswordErrorMessage('Invalid username or password');
+      setSuccessMessage('');
+      toast.error('Credenciales inválidas');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -149,49 +124,36 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">
           <SitemarkIcon />
-          <Typography
-            component="h1"
-            variant="h4"
-            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-          >
+          <Typography component="h1" variant="h4" sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}>
             Sign in
           </Typography>
 
-          {/* Mensaje de éxito */}
           {successMessage && (
             <Alert severity="success" sx={{ width: '100%' }}>
               {successMessage}
             </Alert>
           )}
 
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
-              gap: 2,
-            }}
-          >
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}>
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormLabel htmlFor="username">Username</FormLabel>
               <TextField
-                error={emailError}
-                helperText={emailErrorMessage}
-                id="email"
-                type="email"
-                name="email"
-                placeholder="your@email.com"
-                autoComplete="email"
+                error={usernameError}
+                helperText={usernameErrorMessage}
+                id="username"
+                name="username"
+                placeholder="your_username"
+                autoComplete="username"
                 autoFocus
                 required
                 fullWidth
                 variant="outlined"
-                color={emailError ? 'error' : 'primary'}
+                color={usernameError ? 'error' : 'primary'}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </FormControl>
+
             <FormControl>
               <FormLabel htmlFor="password">Password</FormLabel>
               <TextField
@@ -206,24 +168,19 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                 fullWidth
                 variant="outlined"
                 color={passwordError ? 'error' : 'primary'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </FormControl>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              disabled={loading}
-            >
+
+            <Button type="submit" fullWidth variant="contained" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign in'}
             </Button>
           </Box>
+
           <Typography sx={{ textAlign: 'center' }}>
             Don&apos;t have an account?{' '}
-            <Link
-              href="/signup"
-              variant="body2"
-              sx={{ alignSelf: 'center' }}
-            >
+            <Link href="/signup" variant="body2" sx={{ alignSelf: 'center' }}>
               Sign up
             </Link>
           </Typography>

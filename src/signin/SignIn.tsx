@@ -19,6 +19,9 @@ import { SitemarkIcon } from '../components/CustomIcons';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 
+import { useNavigate } from 'react-router-dom';
+
+
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -71,6 +74,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -100,6 +105,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       await login(username, password);
       setSuccessMessage('Login successful!');
       toast.success('¡Sesión iniciada!');
+      navigate('/dashboard', { replace: true });
+
     } catch {
       setPasswordError(true);
       setPasswordErrorMessage('Invalid username or password');

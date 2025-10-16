@@ -3,7 +3,7 @@ import React, {
   useContext,
   useMemo,
   useState,
-  useEffect, // 👈 añadido
+  useEffect,
 } from 'react';
 import api, { Tokens } from '../services/api';
 
@@ -11,6 +11,7 @@ type User = { username: string } | null;
 
 type AuthCtx = {
   user: User;
+  ready: boolean; // 👈 nuevo: indica si ya intentamos hidratar
   login: (username: string, password: string) => Promise<void>;
   signup: (username: string, password: string) => Promise<void>;
   profile: () => Promise<void>;
@@ -21,6 +22,7 @@ const Ctx = createContext<AuthCtx | null>(null);
 
 export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [user, setUser] = useState<User>(null);
+  const [ready, setReady] = useState(false); // 👈
 
   // --- LOGIN ---
   const login = async (username: string, password: string) => {
@@ -47,19 +49,30 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     setUser(null);
   };
 
-  // --- HIDRATAR SESIÓN DESDE TOKENS AL MONTAR ---
+  // --- HIDRATACIÓN INICIAL ---
   useEffect(() => {
-    if (Tokens.access) {
-      profile().catch(() => {
+    const run = async () => {
+      try {
+        if (Tokens.access) {
+          await profile();
+        } else {
+          setUser(null);
+        }
+      } catch {
         Tokens.clear();
         setUser(null);
-      });
-    }
-    // solo al montar
+      } finally {
+        setReady(true); // 👈 marcamos que ya se intentó hidratar
+      }
+    };
+    run();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const value = useMemo(() => ({ user, login, signup, profile, logout }), [user]);
+  const value = useMemo(
+    () => ({ user, ready, login, signup, profile, logout }),
+    [user, ready]
+  );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 };

@@ -27,9 +27,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   padding: theme.spacing(4),
   gap: theme.spacing(2),
   margin: 'auto',
-  [theme.breakpoints.up('sm')]: {
-    maxWidth: '450px',
-  },
+  [theme.breakpoints.up('sm')]: { maxWidth: '450px' },
   boxShadow:
     'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
   ...theme.applyStyles('dark', {
@@ -42,9 +40,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
   minHeight: '100%',
   padding: theme.spacing(2),
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(4),
-  },
+  [theme.breakpoints.up('sm')]: { padding: theme.spacing(4) },
   '&::before': {
     content: '""',
     display: 'block',
@@ -64,10 +60,9 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const { login } = useAuth();
 
-  // 🔹 Estado controlado
-  const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = useState('');
+  const [username, setUsername] = useState('');
+  const [usernameError, setUsernameError] = useState(false);
+  const [usernameErrorMessage, setUsernameErrorMessage] = useState('');
 
   const [password, setPassword] = useState('');
   const [passwordError, setPasswordError] = useState(false);
@@ -79,15 +74,14 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // 🔸 Validación mínima
     let isValid = true;
-    if (!email || !/\S+@\S+\.\S+/.test(email)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
+    if (!username.trim()) {
+      setUsernameError(true);
+      setUsernameErrorMessage('Please enter your username (use your email if that is your username).');
       isValid = false;
     } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
+      setUsernameError(false);
+      setUsernameErrorMessage('');
     }
     if (!password || password.length < 6) {
       setPasswordError(true);
@@ -103,14 +97,12 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     setSuccessMessage('');
 
     try {
-      // 🔹 Llama a /api/auth/login/ con email+password (AuthContext guarda tokens y hace profile)
-      await login(email, password);
-
+      await login(username, password);
       setSuccessMessage('Login successful!');
       toast.success('¡Sesión iniciada!');
-    } catch (error: any) {
+    } catch {
       setPasswordError(true);
-      setPasswordErrorMessage('Invalid email or password');
+      setPasswordErrorMessage('Invalid username or password');
       setSuccessMessage('');
       toast.error('Credenciales inválidas');
     } finally {
@@ -125,49 +117,33 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">
           <SitemarkIcon />
-          <Typography
-            component="h1"
-            variant="h4"
-            sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-          >
+          <Typography component="h1" variant="h4" sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}>
             Sign in
           </Typography>
 
-          {/* Mensaje de éxito */}
           {successMessage && (
             <Alert severity="success" sx={{ width: '100%' }}>
               {successMessage}
             </Alert>
           )}
 
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              width: '100%',
-              gap: 2,
-            }}
-          >
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}>
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormLabel htmlFor="username">Username (or your email if that is your username)</FormLabel>
               <TextField
-                error={emailError}
-                helperText={emailErrorMessage}
-                id="email"
-                type="email"
-                name="email"
-                placeholder="your@email.com"
-                autoComplete="email"
+                error={usernameError}
+                helperText={usernameErrorMessage}
+                id="username"
+                name="username"
+                placeholder="your_username_or_email"
+                autoComplete="username"
                 autoFocus
                 required
                 fullWidth
                 variant="outlined"
-                color={emailError ? 'error' : 'primary'}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                color={usernameError ? 'error' : 'primary'}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </FormControl>
 

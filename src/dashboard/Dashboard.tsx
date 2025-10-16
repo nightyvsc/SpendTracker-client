@@ -19,6 +19,9 @@ import {
   treeViewCustomizations,
 } from '../theme/customizations';
 
+import { Outlet } from 'react-router-dom';
+
+
 const xThemeComponents = {
   ...chartsCustomizations,
   ...dataGridCustomizations,
@@ -55,6 +58,21 @@ export default function Dashboard(props: { disableCustomTheme?: boolean }) {
           >
             <Header />
             <MainGrid />
+            <Stack
+  spacing={2}
+  sx={{
+    alignItems: 'center',
+    mx: 3,
+    pb: 5,
+    mt: { xs: 8, md: 0 },
+  }}
+>
+  <Header />
+  <MainGrid />
+  {/* 👇 aquí se montan subrutas como Reports */}
+  <Outlet />
+</Stack>
+
           </Stack>
         </Box>
       </Box>

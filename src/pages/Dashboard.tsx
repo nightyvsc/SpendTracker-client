@@ -1,4 +1,3 @@
-import * as React from 'react';
 import type {} from '@mui/x-date-pickers/themeAugmentation';
 import type {} from '@mui/x-charts/themeAugmentation';
 import type {} from '@mui/x-data-grid-pro/themeAugmentation';
@@ -18,9 +17,9 @@ import {
   datePickersCustomizations,
   treeViewCustomizations,
 } from '../theme/customizations';
-
 import { Outlet } from 'react-router-dom';
 
+import TrendWidget from '../components/TrendWidget';
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -36,6 +35,7 @@ export default function Dashboard(props: { disableCustomTheme?: boolean }) {
       <Box sx={{ display: 'flex' }}>
         <SideMenu />
         <AppNavbar />
+
         {/* Main content */}
         <Box
           component="main"
@@ -58,21 +58,12 @@ export default function Dashboard(props: { disableCustomTheme?: boolean }) {
           >
             <Header />
             <MainGrid />
-            <Stack
-  spacing={2}
-  sx={{
-    alignItems: 'center',
-    mx: 3,
-    pb: 5,
-    mt: { xs: 8, md: 0 },
-  }}
->
-  <Header />
-  <MainGrid />
-  {/* 👇 aquí se montan subrutas como Reports */}
-  <Outlet />
-</Stack>
 
+            {/* 👇 Aquí colocamos la gráfica de tendencia en el dashboard principal */}
+            <TrendWidget />
+
+            {/* Si usas subrutas (p. ej., /dashboard/reports/summary) se renderizan aquí */}
+            <Outlet />
           </Stack>
         </Box>
       </Box>

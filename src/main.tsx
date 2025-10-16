@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import "./index.css";
-import Dashboard from "./dashboard/Dashboard.tsx";
+import Dashboard from "./pages/Dashboard.tsx";
 import SignIn from "./pages/SignIn.tsx"
 import SignUp from "./pages/SignUp.tsx"
 

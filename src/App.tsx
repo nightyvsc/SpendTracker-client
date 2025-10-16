@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import SignIn from './signin/SignIn';
+import SignIn from './pages/SignIn.tsx';
 import PrivateRoute from './routes/PrivateRoute';
 
-// Usa tu dashboard existente
-import Dashboard from './dashboard/Dashboard';
+import Dashboard from './pages/Dashboard.tsx';
+import SignUp from './pages/SignUp.tsx';
 
 export default function App() {
   return (
@@ -11,6 +11,7 @@ export default function App() {
       <Routes>
         {/* pública */}
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
 
         {/* protegidas */}
         <Route element={<PrivateRoute />}>

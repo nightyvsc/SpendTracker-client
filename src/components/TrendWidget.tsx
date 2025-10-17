@@ -34,7 +34,6 @@ export default function TrendWidget() {
 
   useEffect(() => {
     fetchData(gran);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gran]);
 
   const chartData = (data?.series ?? []).map(s => ({

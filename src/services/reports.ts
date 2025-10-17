@@ -2,9 +2,9 @@
 import api from './api';
 
 export type TrendParams = {
-  start?: string;                 // 'YYYY-MM-DD' opcional
-  end?: string;                   // 'YYYY-MM-DD' opcional
-  granularity?: 'day' | 'week' | 'month'; // default backend: 'week'
+  start?: string; // 'YYYY-MM-DD'
+  end?: string;   // 'YYYY-MM-DD'
+  granularity?: 'day' | 'week' | 'month'; // backend default: 'week'
 };
 
 export type TrendResp = {

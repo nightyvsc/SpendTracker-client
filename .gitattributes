@@ -1,5 +1,0 @@
-# Normaliza los finales de línea en texto
-* text=auto
-
-# Fuerza line endings LF para el lockfile
-pnpm-lock.yaml text eol=lf

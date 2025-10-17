@@ -21,6 +21,7 @@ export default function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/spendings/*" element={<CrudDashboard />} />
+          <Route path="/dashboard/expenses/*" element={<CrudDashboard />} />
           {/* Aquí luego agregamos /reports y demás */}
         </Route>
 

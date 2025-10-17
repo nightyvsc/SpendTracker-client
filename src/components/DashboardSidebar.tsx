@@ -16,6 +16,7 @@ import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from '../constants';
 import DashboardSidebarPageItem from './DashboardSidebarPageItem';
 import DashboardSidebarHeaderItem from './DashboardSidebarHeaderItem';
 import DashboardSidebarDividerItem from './DashboardSidebarDividerItem';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import {
   getDrawerSxTransitionMixin,
   getDrawerWidthTransitionMixin,
@@ -134,11 +135,14 @@ export default function DashboardSidebar({
           >
             <DashboardSidebarHeaderItem>Main items</DashboardSidebarHeaderItem>
             <DashboardSidebarPageItem
-              id="employees"
-              title="Employees"
-              icon={<PersonIcon />}
-              href="/dashboard/spendings/employees"
-              selected={!!matchPath('/dashboard/spendings/employees/*', pathname) || pathname === '/dashboard'}
+              id="expenses"
+              title="Expenses"
+              icon={<AttachMoneyIcon />}
+              href="/dashboard/expenses"
+              selected={
+                !!matchPath('/dashboard/expenses/*', pathname) ||
+                pathname === '/dashboard/expenses'
+              }
             />
             <DashboardSidebarPageItem
               id="categories"

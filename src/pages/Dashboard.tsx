@@ -32,12 +32,12 @@ const xThemeComponents = {
 };
 
 export default function Dashboard(props: { disableCustomTheme?: boolean }) {
-  // 🧠 Estados locales para guardar datos del backend
+  
   const [summary, setSummary] = useState<any>(null);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 🚀 Cargamos datos desde el backend al montar el componente
+  
   useEffect(() => {
     async function fetchData() {
       try {
@@ -86,7 +86,7 @@ export default function Dashboard(props: { disableCustomTheme?: boolean }) {
             <Header />
             <MainGrid />
 
-            {/* 👇 NUEVA SECCIÓN DE GRÁFICAS */}
+            {/* NUEVA SECCIÓN DE GRÁFICAS */}
             {!loading && summary && (
               <Stack direction={{ xs: 'column', md: 'row' }} spacing={4} sx={{ mt: 4 }}>
                 {/* Gráfico de resumen mensual */}

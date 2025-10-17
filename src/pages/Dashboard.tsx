@@ -1,4 +1,3 @@
-import * as React from 'react';
 import type {} from '@mui/x-date-pickers/themeAugmentation';
 import type {} from '@mui/x-charts/themeAugmentation';
 import type {} from '@mui/x-data-grid-pro/themeAugmentation';
@@ -19,10 +18,9 @@ import {
   treeViewCustomizations,
 } from '../theme/customizations';
 import { Outlet } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import api from '../services/api';
-import { PieChart, BarChart } from '@mui/x-charts';
-import { Card, CardContent, Typography } from '@mui/material';
+
+// 👇 Tu widget de tendencia (Recharts)
+import TrendWidget from '../components/TrendWidget';
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -127,21 +125,11 @@ export default function Dashboard(props: { disableCustomTheme?: boolean }) {
                 </Card>
               </Stack>
             )}
+            {/* 👇 Aquí va tu gráfica de tendencia en el dashboard principal */}
+            <TrendWidget />
 
-            {/* 👇 Subrutas */}
-            <Stack
-              spacing={2}
-              sx={{
-                alignItems: 'center',
-                mx: 3,
-                pb: 5,
-                mt: { xs: 8, md: 0 },
-              }}
-            >
-              <Header />
-              <MainGrid />
-              <Outlet />
-            </Stack>
+            {/* 👇 Si en el futuro anidas subrutas del dashboard, se renderizan aquí */}
+            <Outlet />
           </Stack>
         </Box>
       </Box>

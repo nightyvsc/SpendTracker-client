@@ -284,42 +284,45 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
                 disabled={loading}
               />
             </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <TextField
-                required
-                fullWidth
-                name="password"
-                placeholder="••••••"
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                variant="outlined"
-                value={formData.password}
-                onChange={handleChange}
-                error={!!errors.password}
-                helperText={errors.password}
-                disabled={loading}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="passwordValidator">Confirm Password</FormLabel>
-              <TextField
-                required
-                fullWidth
-                name="passwordValidator"
-                placeholder="••••••"
-                type="password"
-                id="passwordValidator"
-                autoComplete="new-password"
-                variant="outlined"
-                value={formData.passwordValidator}
-                onChange={handleChange}
-                error={!!errors.passwordValidator}
-                helperText={errors.passwordValidator}
-                disabled={loading}
-              />
-            </FormControl>
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <FormControl sx={{ flex: 1 }}>
+                <FormLabel htmlFor="password">Password</FormLabel>
+                <TextField
+                  required
+                  fullWidth
+                  name="password"
+                  placeholder="••••••"
+                  type="password"
+                  id="password"
+                  autoComplete="new-password"
+                  variant="outlined"
+                  value={formData.password}
+                  onChange={handleChange}
+                  error={!!errors.password}
+                  helperText={errors.password}
+                  disabled={loading}
+                />
+              </FormControl>
+
+              <FormControl sx={{ flex: 1 }}>
+                <FormLabel htmlFor="passwordValidator">Confirm Password</FormLabel>
+                <TextField
+                  required
+                  fullWidth
+                  name="passwordValidator"
+                  placeholder="••••••"
+                  type="password"
+                  id="passwordValidator"
+                  autoComplete="new-password"
+                  variant="outlined"
+                  value={formData.passwordValidator}
+                  onChange={handleChange}
+                  error={!!errors.passwordValidator}
+                  helperText={errors.passwordValidator}
+                  disabled={loading}
+                />
+              </FormControl>
+            </Box>
             <Box sx={{ display: 'flex', gap: 2 }}>
               <FormControl sx={{ flex: 1 }}>
                 <FormLabel htmlFor="currency">Currency</FormLabel>

@@ -137,8 +137,15 @@ export default function DashboardSidebar({
               id="employees"
               title="Employees"
               icon={<PersonIcon />}
-              href="/employees"
-              selected={!!matchPath('/employees/*', pathname) || pathname === '/'}
+              href="/dashboard/spendings/employees"
+              selected={!!matchPath('/dashboard/spendings/employees/*', pathname) || pathname === '/dashboard'}
+            />
+            <DashboardSidebarPageItem
+              id="categories"
+              title="Categories"
+              icon={<LayersIcon />}
+              href="/dashboard/spendings/category"
+              selected={!!matchPath('/dashboard/spendings/category/*', pathname) || pathname === '/dashboard/spendings/category'}
             />
             <DashboardSidebarDividerItem />
             <DashboardSidebarHeaderItem>Example items</DashboardSidebarHeaderItem>

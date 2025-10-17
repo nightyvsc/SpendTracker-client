@@ -20,6 +20,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
+import { Link as RouterLink } from 'react-router-dom';
 import { useDialogs } from '../hooks/useDialogs/useDialogs';
 import useNotifications from '../hooks/useNotifications/useNotifications';
 import {
@@ -275,6 +276,7 @@ export default function EmployeeList() {
               </IconButton>
             </div>
           </Tooltip>
+          <Button component={RouterLink} to="category" variant="outlined">Categories</Button>
           <Button
             variant="contained"
             onClick={handleCreateClick}

@@ -11,19 +11,22 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         {/* pública */}
+        
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/spendings/*" element={<CrudDashboard />} />
+  {/* spendings moved under protected /dashboard/spendings/* */}
+       
 
         {/* protegidas */}
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/spendings/*" element={<CrudDashboard />} />
           {/* Aquí luego agregamos /reports y demás */}
         </Route>
 
         {/* redirecciones por defecto */}
         <Route path="/" element={<Navigate to="/signin" replace />} />
-        <Route path="*" element={<Navigate to="/signin" replace />} />
+        <Route path="*" element={<Navigate to="/signin" replace />} /> 
       </Routes>
     </BrowserRouter>
   );

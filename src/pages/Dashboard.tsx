@@ -2,10 +2,12 @@ import type {} from '@mui/x-date-pickers/themeAugmentation';
 import type {} from '@mui/x-charts/themeAugmentation';
 import type {} from '@mui/x-data-grid-pro/themeAugmentation';
 import type {} from '@mui/x-tree-view/themeAugmentation';
+
 import { alpha } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+
 import AppNavbar from '../components/AppNavbar';
 import Header from '../components/Header';
 import MainGrid from '../components/MainGrid';
@@ -19,7 +21,27 @@ import {
 } from '../theme/customizations';
 import { Outlet } from 'react-router-dom';
 
-// 👇 Tu widget de tendencia (Recharts)
+// --- Datos / estado / API ---
+import { useEffect, useState } from 'react';
+import api from '../services/api';
+
+// --- UI Recharts (Summary + ByCategory) ---
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
+import { Card, CardContent, Typography, LinearProgress, Alert } from '@mui/material';
+
+// --- Tu widget de Tendencia (Recharts) ---
 import TrendWidget from '../components/TrendWidget';
 
 const xThemeComponents = {
@@ -29,29 +51,40 @@ const xThemeComponents = {
   ...treeViewCustomizations,
 };
 
-export default function Dashboard(props: { disableCustomTheme?: boolean }) {
-  
-  const [summary, setSummary] = useState<any>(null);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+type MonthlyPoint = { month: string; total: number };
+type CategoryPoint = { category: string; total: number; pct: number };
+type SummaryResp = { monthly: MonthlyPoint[]; /* daily?: ... */ };
 
-  
+export default function Dashboard(props: { disableCustomTheme?: boolean }) {
+  const [summary, setSummary] = useState<SummaryResp | null>(null);
+  const [categories, setCategories] = useState<CategoryPoint[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState<string | null>(null);
+
+  // Cargar Summary y By-Category al montar
   useEffect(() => {
-    async function fetchData() {
+    let mounted = true;
+    (async () => {
       try {
+        setErr(null);
         const [summaryRes, categoryRes] = await Promise.all([
           api.get('/api/reports/summary/'),
           api.get('/api/reports/by-category/'),
         ]);
-        setSummary(summaryRes.data);
-        setCategories(categoryRes.data.by_category);
-      } catch (err) {
-        console.error('Error cargando datos del dashboard:', err);
+        if (!mounted) return;
+        setSummary(summaryRes.data ?? { monthly: [] });
+        setCategories(categoryRes.data?.by_category ?? []);
+      } catch (e) {
+        if (!mounted) return;
+        setErr('No se pudieron cargar los datos del dashboard.');
+        console.error(e);
       } finally {
-        setLoading(false);
+        if (mounted) setLoading(false);
       }
-    }
-    fetchData();
+    })();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (
@@ -84,51 +117,85 @@ export default function Dashboard(props: { disableCustomTheme?: boolean }) {
             <Header />
             <MainGrid />
 
-            {/* NUEVA SECCIÓN DE GRÁFICAS */}
-            {!loading && summary && (
-              <Stack direction={{ xs: 'column', md: 'row' }} spacing={4} sx={{ mt: 4 }}>
-                {/* Gráfico de resumen mensual */}
-                <Card sx={{ width: 400, p: 2 }}>
+            {/* Estado de carga / error */}
+            {loading && (
+              <Box sx={{ width: '100%', mt: 1 }}>
+                <LinearProgress />
+              </Box>
+            )}
+            {err && (
+              <Box sx={{ width: '100%' }}>
+                <Alert severity="error">{err}</Alert>
+              </Box>
+            )}
+
+            {/* Bloque: Summary (mensual) + ByCategory */}
+            {!loading && !err && summary && (
+              <Stack
+                direction={{ xs: 'column', md: 'row' }}
+                spacing={4}
+                sx={{ mt: 2, width: '100%' }}
+              >
+                {/* Resumen mensual */}
+                <Card sx={{ flex: 1 }}>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
                       Gastos mensuales
                     </Typography>
-                    <BarChart
-                      xAxis={[{ data: summary.monthly.map((m: any) => m.month) }]}
-                      series={[{ data: summary.monthly.map((m: any) => m.total) }]}
-                      width={360}
-                      height={250}
-                    />
+                    <div style={{ width: '100%', height: 280 }}>
+                      <ResponsiveContainer>
+                        <BarChart data={summary.monthly ?? []}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="month" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="total" name="Total" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
                   </CardContent>
                 </Card>
 
-                {/* Gráfico por categoría */}
-                <Card sx={{ width: 400, p: 2 }}>
+                {/* Por categoría */}
+                <Card sx={{ flex: 1 }}>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
                       Gastos por categoría
                     </Typography>
-                    <PieChart
-                      series={[
-                        {
-                          data: categories.map((c) => ({
-                            id: c.category,
-                            value: c.total,
-                            label: `${c.category} (${c.pct}%)`,
-                          })),
-                        },
-                      ]}
-                      width={360}
-                      height={250}
-                    />
+                    <div style={{ width: '100%', height: 280 }}>
+                      <ResponsiveContainer>
+                        <PieChart>
+                          <Pie
+                            data={categories}
+                            dataKey="total"
+                            nameKey="category"
+                            outerRadius={100}
+                            label={({ name, payload }: { name?: string; payload?: any }) =>
+                              `${name ?? payload?.category ?? ''} (${payload?.pct ?? 0}%)`
+                            }
+                          >
+                            {categories.map((_, i) => (
+                              <Cell
+                                key={i}
+                                fill={`hsl(${(i * 60) % 360}, 70%, 60%)`}
+                              />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                          <Legend />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
                   </CardContent>
                 </Card>
               </Stack>
             )}
-            {/* 👇 Aquí va tu gráfica de tendencia en el dashboard principal */}
+
+            {/* Tendencia (tu widget) */}
             <TrendWidget />
 
-            {/* 👇 Si en el futuro anidas subrutas del dashboard, se renderizan aquí */}
+            {/* Subrutas (si las agregan a futuro) */}
             <Outlet />
           </Stack>
         </Box>

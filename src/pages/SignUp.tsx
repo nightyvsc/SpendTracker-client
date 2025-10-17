@@ -18,6 +18,7 @@ import ColorModeSelect from '../shared-theme/ColorModeSelect';
 import {SitemarkIcon} from '../components/CustomIcons';
 import Alert from '@mui/material/Alert';
 import MenuItem from '@mui/material/MenuItem';
+import logo from '../../public/spend_tracker_logo.png'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -204,7 +205,7 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
       <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
       <SignUpContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
-          <SitemarkIcon />
+          <img src={logo} width={100}/>
           <Typography
             component="h1"
             variant="h4"

@@ -40,22 +40,15 @@ export default function CrudDashboard(props: { disableCustomTheme?: boolean }) {
           <Routes>
             <Route element={<DashboardLayout />}>
 
-              {/* ======================= */}
-              {/*       EXPENSES          */}
-              {/* ======================= */}
               <Route index element={<ExpenseList />} />
               <Route path="expenses" element={<ExpenseList />} />
               <Route path="expenses/new" element={<ExpenseCreate />} />
               <Route path="expenses/:expenseId/edit" element={<ExpenseEdit />} />
 
-              {/* ======================= */}
-              {/*       CATEGORIES        */}
-              {/* ======================= */}
               <Route path="category" element={<CategoryList />} />
               <Route path="category/details" element={<CategoryDetails />} />
               <Route path="category/new" element={<CategoryCreate />} />
 
-              {/* Fallback */}
               <Route path="*" element={<ExpenseList />} />
             </Route>
           </Routes>

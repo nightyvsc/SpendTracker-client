@@ -11,10 +11,11 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-import { Alert } from '@mui/material';
+import { Alert, Icon } from '@mui/material';
 import AppTheme from '../theme/AppTheme';
 import ColorModeSelect from '../theme/ColorModeSelect';
 import { SitemarkIcon } from '../components/CustomIcons';
+import logo from '../../public/spend_tracker_logo.png'
 
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -123,7 +124,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       <SignInContainer direction="column" justifyContent="space-between">
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">
-          <SitemarkIcon />
+          <img src={logo} width={100}/>
           <Typography component="h1" variant="h4" sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}>
             Sign in
           </Typography>

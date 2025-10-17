@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 import AccountBalanceWalletRoundedIcon from '@mui/icons-material/AccountBalanceWalletRounded';
 import SelectContent from './SelectContent';
 import MenuContent from './MenuContent';
+import logo from '../../public/spend_tracker_logo.png'
 
 const drawerWidth = 240;
 
@@ -40,6 +41,7 @@ export default function SideMenu() {
         },
       }}
     >
+      <a href='/dashboard' style={{ margin: '0 auto' }}><img src={logo} width={100} /></a>
       <Box
         sx={{
           display: 'flex',

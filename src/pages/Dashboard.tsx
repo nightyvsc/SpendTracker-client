@@ -2,6 +2,7 @@ import type {} from '@mui/x-date-pickers/themeAugmentation';
 import type {} from '@mui/x-charts/themeAugmentation';
 import type {} from '@mui/x-data-grid-pro/themeAugmentation';
 import type {} from '@mui/x-tree-view/themeAugmentation';
+import { useTheme } from '@mui/material/styles';
 
 import { alpha } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -60,7 +61,8 @@ export default function Dashboard(props: { disableCustomTheme?: boolean }) {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
 
-  // Cargar Summary y By-Category al montar
+  const theme = useTheme();
+
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -138,20 +140,60 @@ export default function Dashboard(props: { disableCustomTheme?: boolean }) {
                 <Card sx={{ flex: 1 }}>
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
-                      Gastos mensuales
-                    </Typography>
-                    <div style={{ width: '100%', height: 280 }}>
-                      <ResponsiveContainer>
-                        <BarChart data={summary.monthly ?? []}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="month" />
-                          <YAxis />
-                          <Tooltip />
-                          <Legend />
-                          <Bar dataKey="total" name="Total" />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
+                  Gastos mensuales
+                </Typography>
+                <div style={{ width: '100%', height: 280 }}>
+                  <ResponsiveContainer>
+                    <BarChart data={summary.monthly ?? []}>
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        stroke={theme.palette.divider}
+                      />
+                      <XAxis
+                        dataKey="month"
+                        tick={{
+                          fill: theme.palette.mode === 'dark' ? '#E0E0E0' : '#333333',
+                          fontSize: 12,
+                        }}
+                      />
+                      <YAxis
+                        tick={{
+                          fill: theme.palette.mode === 'dark' ? '#E0E0E0' : '#333333',
+                          fontSize: 12,
+                        }}
+                      />
+                      <Tooltip
+                        contentStyle={{
+                          background: theme.palette.background.paper,
+                          border: '1px solid rgba(255,255,255,0.15)',
+                          color: theme.palette.mode === 'dark' ? '#F5F5F5' : '#222222',
+                          borderRadius: 6,
+                          boxShadow: '0 0 6px rgba(0,0,0,0.2)',
+                        }}
+                        labelStyle={{
+                          color: theme.palette.mode === 'dark' ? '#F5F5F5' : '#111111',
+                          fontWeight: 600,
+                        }}
+                        itemStyle={{
+                          color: theme.palette.primary.main,
+                          fontWeight: 500,
+                        }}
+                      />
+                      <Legend
+                        wrapperStyle={{
+                          color: theme.palette.mode === 'dark' ? '#F5F5F5' : '#222222',
+                          fontSize: 13,
+                        }}
+                      />
+                      <Bar
+                        dataKey="total"
+                        name="Total"
+                        fill={theme.palette.primary.main}
+                        radius={[6, 6, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
                   </CardContent>
                 </Card>
 

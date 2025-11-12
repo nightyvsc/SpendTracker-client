@@ -107,7 +107,6 @@ function SignInContent() {
     try {
       await login(username, password);
       setSuccessMessage('Login successful!');
-      toast.success('¡Sesión iniciada!');
       navigate('/dashboard', { replace: true });
 
     } catch {

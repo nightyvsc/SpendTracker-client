@@ -98,7 +98,8 @@ export default function DashboardHeader({
                     position: 'relative',
                     '& img': {
                       width: 100,
-                      height: 90,
+                      height: 'auto',
+                      objectFit: 'contain',
                     },
                     ...(theme.getColorSchemeSelector ? {
                       [`& img[data-logo="light"]`]: {

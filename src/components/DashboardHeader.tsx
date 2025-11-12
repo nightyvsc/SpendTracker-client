@@ -23,16 +23,6 @@ const AppBar = styled(MuiAppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
 }));
 
-const LogoContainer = styled('div')({
-  position: 'relative',
-  height: 40,
-  display: 'flex',
-  alignItems: 'center',
-  '& img': {
-    maxHeight: 40,
-  },
-});
-
 export interface DashboardHeaderProps {
   logo?: React.ReactNode;
   title?: string;
@@ -41,7 +31,6 @@ export interface DashboardHeaderProps {
 }
 
 export default function DashboardHeader({
-  logo,
   title,
   menuOpen,
   onToggleMenu,

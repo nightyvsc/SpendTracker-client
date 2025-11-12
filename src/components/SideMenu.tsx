@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
@@ -10,6 +10,7 @@ import AccountBalanceWalletRoundedIcon from '@mui/icons-material/AccountBalanceW
 import SelectContent from './SelectContent';
 import MenuContent from './MenuContent';
 import logo from '../../public/spend_tracker_logo.png'
+import logoDark from '../../public/spend_tracker_logo_dark.png'
 
 const drawerWidth = 240;
 
@@ -26,6 +27,7 @@ const Drawer = styled(MuiDrawer)({
 
 export default function SideMenu() {
   const navigate = useNavigate();
+  const theme = useTheme();
 
   const handleSpendingsClick = () => {
     navigate('/dashboard/expenses');
@@ -41,7 +43,33 @@ export default function SideMenu() {
         },
       }}
     >
-      <a href='/dashboard' style={{ margin: '0 auto' }}><img src={logo} width={100} /></a>
+      <a href='/dashboard' style={{ margin: '0 auto' }}>
+        <Box
+          sx={{
+            position: 'relative',
+            '& img': {
+              width: 100,
+            },
+            ...(theme.getColorSchemeSelector ? {
+              [`& img[data-logo="light"]`]: {
+                display: 'block',
+                [theme.getColorSchemeSelector('dark')]: {
+                  display: 'none',
+                },
+              },
+              [`& img[data-logo="dark"]`]: {
+                display: 'none',
+                [theme.getColorSchemeSelector('dark')]: {
+                  display: 'block',
+                },
+              },
+            } : {}),
+          }}
+        >
+          <img src={logoDark} data-logo="light" alt="Spend Tracker" />
+          <img src={logo} data-logo="dark" alt="Spend Tracker" />
+        </Box>
+      </a>
       <Box
         sx={{
           display: 'flex',

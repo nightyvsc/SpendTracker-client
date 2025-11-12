@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # Base de datos MySQL
+  db:
+    image: mysql:8.0
+    container_name: spendtracker_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: spend_tracker
+      MYSQL_USER: st_user
+      MYSQL_PASSWORD: 1234
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - spendtracker-network
+
+  # Backend Django
+  backend:
+    build:
+      context: ../SpendTracker-server
+      dockerfile: Dockerfile
+    container_name: spendtracker_backend
+    restart: unless-stopped
+    volumes:
+      - ../SpendTracker-server:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=spend_tracker
+      - DB_USER=st_user
+      - DB_PASSWORD=1234
+      - DB_PORT=3306
+      - DEBUG=True
+      - SECRET_KEY=django-insecure-+w1et6$w09af9$-j^-($@4h-^c&j8)g$35a+210n8_2=ren!-1
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - spendtracker-network
+    stdin_open: true
+    tty: true
+
+  # Frontend React
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # URL del backend - desde el navegador se accede a localhost:8000
+        - VITE_API_URL=http://localhost:8000
+    container_name: spendtracker_frontend
+    image: spendtracker-client:latest
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - spendtracker-network
+
+networks:
+  spendtracker-network:
+    driver: bridge
+
+volumes:
+  mysql_data:

@@ -144,7 +144,7 @@ export default function ExpenseForm(props: ExpenseFormProps) {
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 12 }} sx={{ display: 'flex' }}>
+                    <Grid size={{ xs: 12}} sx={{ display: 'flex' }}>
                         <TextField
                             value={formValues.description ?? ''}
                             onChange={handleTextFieldChange}
@@ -153,6 +153,11 @@ export default function ExpenseForm(props: ExpenseFormProps) {
                             fullWidth
                             multiline
                             rows={3}
+                            InputProps={{
+                                sx: {
+                                    alignItems: 'flex-start',
+                                }
+                            }}
                         />
                     </Grid>
                 </Grid>

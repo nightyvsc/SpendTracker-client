@@ -10,12 +10,13 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import { Alert, Icon } from '@mui/material';
 import AppTheme from '../theme/AppTheme';
 import ColorModeSelect from '../theme/ColorModeSelect';
 import { SitemarkIcon } from '../components/CustomIcons';
 import logo from '../../public/spend_tracker_logo.png'
+import logoDark from '../../public/spend_tracker_logo_dark.png'
 
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -61,8 +62,9 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export default function SignIn(props: { disableCustomTheme?: boolean }) {
+function SignInContent() {
   const { login } = useAuth();
+  const theme = useTheme();
 
   const [username, setUsername] = useState('');
   const [usernameError, setUsernameError] = useState(false);
@@ -105,7 +107,6 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     try {
       await login(username, password);
       setSuccessMessage('Login successful!');
-      toast.success('¡Sesión iniciada!');
       navigate('/dashboard', { replace: true });
 
     } catch {
@@ -119,12 +120,36 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   };
 
   return (
-    <AppTheme {...props}>
+    <>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">
-          <img src={logo} width={100}/>
+          <Box
+            sx={{
+              position: 'relative',
+              '& img': {
+                width: 100,
+              },
+              ...(theme.getColorSchemeSelector ? {
+                [`& img[data-logo="light"]`]: {
+                  display: 'block',
+                  [theme.getColorSchemeSelector('dark')]: {
+                    display: 'none',
+                  },
+                },
+                [`& img[data-logo="dark"]`]: {
+                  display: 'none',
+                  [theme.getColorSchemeSelector('dark')]: {
+                    display: 'block',
+                  },
+                },
+              } : {}),
+            }}
+          >
+            <img src={logoDark} data-logo="light" alt="Spend Tracker" />
+            <img src={logo} data-logo="dark" alt="Spend Tracker" />
+          </Box>
           <Typography component="h1" variant="h4" sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}>
             Sign in
           </Typography>
@@ -187,6 +212,14 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
           </Typography>
         </Card>
       </SignInContainer>
+    </>
+  );
+}
+
+export default function SignIn(props: { disableCustomTheme?: boolean }) {
+  return (
+    <AppTheme {...props}>
+      <SignInContent />
     </AppTheme>
   );
 }

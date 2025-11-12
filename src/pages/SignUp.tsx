@@ -12,13 +12,14 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
+import { styled, useTheme } from '@mui/material/styles';
 import AppTheme from '../shared-theme/AppTheme';
 import ColorModeSelect from '../shared-theme/ColorModeSelect';
 import {SitemarkIcon} from '../components/CustomIcons';
 import Alert from '@mui/material/Alert';
 import MenuItem from '@mui/material/MenuItem';
 import logo from '../../public/spend_tracker_logo.png'
+import logoDark from '../../public/spend_tracker_logo_dark.png'
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -86,7 +87,8 @@ interface FormErrors {
   income_amount?: string;
 }
 
-export default function SignUp(props: { disableCustomTheme?: boolean }) {
+function SignUpContent() {
+  const theme = useTheme();
   const [formData, setFormData] = React.useState<FormData>({
     username: '',
     email: '',
@@ -200,12 +202,36 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
   };
 
   return (
-    <AppTheme {...props}>
+    <>
       <CssBaseline enableColorScheme />
       <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
       <SignUpContainer direction="column" justifyContent="space-between">
         <Card variant="outlined">
-          <img src={logo} width={100}/>
+          <Box
+            sx={{
+              position: 'relative',
+              '& img': {
+                width: 100,
+              },
+              ...(theme.getColorSchemeSelector ? {
+                [`& img[data-logo="light"]`]: {
+                  display: 'block',
+                  [theme.getColorSchemeSelector('dark')]: {
+                    display: 'none',
+                  },
+                },
+                [`& img[data-logo="dark"]`]: {
+                  display: 'none',
+                  [theme.getColorSchemeSelector('dark')]: {
+                    display: 'block',
+                  },
+                },
+              } : {}),
+            }}
+          >
+            <img src={logoDark} data-logo="light" alt="Spend Tracker" />
+            <img src={logo} data-logo="dark" alt="Spend Tracker" />
+          </Box>
           <Typography
             component="h1"
             variant="h4"
@@ -402,6 +428,14 @@ export default function SignUp(props: { disableCustomTheme?: boolean }) {
           </Box>
         </Card>
       </SignUpContainer>
+    </>
+  );
+}
+
+export default function SignUp(props: { disableCustomTheme?: boolean }) {
+  return (
+    <AppTheme {...props}>
+      <SignUpContent />
     </AppTheme>
   );
 }

@@ -12,6 +12,7 @@ import Stack from '@mui/material/Stack';
 import { Link } from 'react-router';
 import ThemeSwitcher from './ThemeSwitcher';
 import logosp from '../../public/spend_tracker_logo.png'
+import logospDark from '../../public/spend_tracker_logo_dark.png'
 
 const AppBar = styled(MuiAppBar)(({ theme }) => ({
   borderWidth: 0,
@@ -92,7 +93,32 @@ export default function DashboardHeader({
             <Box sx={{ mr: 1 }}>{getMenuIcon(menuOpen)}</Box>
             <Link to="/dashboard" style={{ textDecoration: 'none' }}>
               <Stack direction="row" alignItems="center">
-                <img src={logosp} width={100} height={90}/>
+                <Box
+                  sx={{
+                    position: 'relative',
+                    '& img': {
+                      width: 100,
+                      height: 90,
+                    },
+                    ...(theme.getColorSchemeSelector ? {
+                      [`& img[data-logo="light"]`]: {
+                        display: 'block',
+                        [theme.getColorSchemeSelector('dark')]: {
+                          display: 'none',
+                        },
+                      },
+                      [`& img[data-logo="dark"]`]: {
+                        display: 'none',
+                        [theme.getColorSchemeSelector('dark')]: {
+                          display: 'block',
+                        },
+                      },
+                    } : {}),
+                  }}
+                >
+                  <img src={logospDark} data-logo="light" alt="Spend Tracker" />
+                  <img src={logosp} data-logo="dark" alt="Spend Tracker" />
+                </Box>
                 {title ? (
                   <Typography
                     variant="h6"

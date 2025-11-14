@@ -155,6 +155,8 @@ src/
 ├── theme/              # Customizaciones de Material UI
 └── App.tsx             # Componente raíz
 ```
+<img width="783" height="165" alt="Screenshot 2025-11-13 at 3 56 08 PM" src="https://github.com/user-attachments/assets/a7f29c83-bf34-4265-9c80-505eb75375c4" />
+
 
 ### Principios de Diseño
 
